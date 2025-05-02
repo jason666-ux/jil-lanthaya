@@ -1,62 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Watch Full Video</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 100px;
-    }
-    button {
-      padding: 15px 30px;
-      font-size: 18px;
-      margin: 20px;
-      cursor: pointer;
-    }
-    .red { background-color: red; color: white; border: none; }
-    .green { background-color: green; color: white; border: none; display: none; }
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    .btn { padding: 15px 30px; font-size: 20px; cursor: pointer; border: none; border-radius: 8px; margin-top: 20px; }
+    .red { background-color: red; color: white; }
+    .green { background-color: green; color: white; display: none; }
   </style>
 </head>
 <body>
 
-  <h2>Watch Full Video</h2>
+  <h1>Watch Full Video</h1>
+  <p>Click the button below to continue</p>
 
-  <button id="watchAd" class="red">Watch Full Video</button>
-  <button id="watchNow" class="green">Watch Now</button>
+  <button class="btn red" id="adButton">Watch Full Video (Ad)</button>
+  <button class="btn green" id="finalButton">Continue to Video</button>
 
-  <p id="info" style="margin-top: 30px; color: gray;"></p>
+  <p id="timer" style="font-size: 18px; margin-top: 20px;"></p>
 
   <script>
-    // Get ?video= code from URL
+    // Get the video code from URL
     const urlParams = new URLSearchParams(window.location.search);
     const videoCode = urlParams.get('video');
 
     if (!videoCode) {
-      document.body.innerHTML = "<h3>Error: No video code provided!</h3>";
+      document.body.innerHTML = "<h2>Error: No video code provided!</h2>";
     }
 
-    // Adsterra ad link (replace with your real ad link)
-    const adLink = "https://example-adsterra-ad.com";
+    const adButton = document.getElementById('adButton');
+    const finalButton = document.getElementById('finalButton');
+    const timer = document.getElementById('timer');
 
-    // Set up buttons
-    const watchAdBtn = document.getElementById('watchAd');
-    const watchNowBtn = document.getElementById('watchNow');
-    const info = document.getElementById('info');
+    let countdown = 12;
+    let adClicked = false;
 
-    watchAdBtn.addEventListener('click', () => {
-      info.innerText = "Please wait 12 seconds on the ad page and click back!";
-      window.open(adLink, '_blank');
-      // Show green button after 12 sec
-      setTimeout(() => {
-        watchNowBtn.style.display = 'inline-block';
-        info.innerText = "Now you can click Watch Now to get your video.";
-      }, 12000);
+    adButton.addEventListener('click', () => {
+      // Open Adsterra ad in same tab
+      window.location.href = 'https://YOUR-ADSTERRA-AD-LINK.com'; // <-- Put your ad link here
+      adClicked = true;
     });
 
-    watchNowBtn.addEventListener('click', () => {
-      // Redirect to your bot with video code
-      window.location.href = `https://t.me/YourBotUsername?start=${videoCode}`;
+    // Detect when user comes BACK
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        // Show timer and final button
+        if (adClicked) {
+          startCountdown();
+        }
+      }
+    });
+
+    function startCountdown() {
+      timer.innerText = `Please wait ${countdown} seconds...`;
+      let interval = setInterval(() => {
+        countdown--;
+        timer.innerText = `Please wait ${countdown} seconds...`;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          timer.innerText = "Now you can continue!";
+          finalButton.style.display = "inline-block";
+          adButton.style.display = "none";
+        }
+      }, 1000);
+    }
+
+    finalButton.addEventListener('click', () => {
+      // Redirect to your Telegram bot with the video code
+      window.location.href = `https://t.me/YOUR_BOT_USERNAME?start=${videoCode}`;
     });
   </script>
 
