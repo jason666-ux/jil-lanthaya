@@ -35,40 +35,54 @@
 
     const requiredStay = 12; // seconds
 
+    // On page load — check real condition
+    window.addEventListener('load', () => {
+      checkUnlock();
+    });
+
     adButton.addEventListener('click', () => {
-      // Save click timestamp
+      // Save click time + mark ad visit started
       localStorage.setItem('adClickTime', Date.now());
-      // Go to ad page
+      localStorage.setItem('adVisitInProgress', 'true');
       window.location.href = 'https://monetag.com/'; // your ad link
     });
 
     window.addEventListener('pageshow', () => {
+      checkUnlock();
+    });
+
+    function checkUnlock() {
       let clickTime = localStorage.getItem('adClickTime');
-      if (clickTime) {
+      let visitInProgress = localStorage.getItem('adVisitInProgress');
+
+      if (clickTime && visitInProgress === 'true') {
         let timeSpent = Math.floor((Date.now() - clickTime) / 1000);
-        console.log(`User stayed on ad page for ${timeSpent} seconds`);
 
         if (timeSpent >= requiredStay) {
-          unlockButton(); // instantly show green button
+          unlockButton();
         } else {
           alert(`You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
-          // Keep red button visible
           resetState();
         }
+      } else {
+        resetState();
       }
-    });
+    }
 
     function unlockButton() {
       timer.innerText = "Now you can continue!";
       finalButton.style.display = "inline-block";
       adButton.style.display = "none";
-      localStorage.removeItem('adClickTime'); // clear time after success
+      // Mark as completed, no cheat on refresh
+      localStorage.setItem('adVisitInProgress', 'completed');
     }
 
     function resetState() {
       timer.innerText = "";
       finalButton.style.display = "none";
       adButton.style.display = "inline-block";
+      // Important: do not mark completed if cheated
+      localStorage.setItem('adVisitInProgress', 'false');
     }
 
     finalButton.addEventListener('click', () => {
