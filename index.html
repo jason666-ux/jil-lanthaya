@@ -33,47 +33,65 @@
     const finalButton = document.getElementById('finalButton');
     const timer = document.getElementById('timer');
 
-    let totalCountdown = 12;
-    let countdownInterval;
+    // Bonus Protection Data
+    let countdown = 12;
+    let adClicked = false;
+    let visitTimestamp = 0;
 
-    // Start countdown function
-    function startCountdown() {
-      let startTime = localStorage.getItem('countdownStartTime');
-      if (!startTime) {
-        return; // Nothing to do
-      }
-
-      startTime = parseInt(startTime);
-
-      countdownInterval = setInterval(() => {
-        let elapsed = Math.floor((Date.now() - startTime) / 1000);
-        let secondsLeft = totalCountdown - elapsed;
-
-        if (secondsLeft <= 0) {
-          clearInterval(countdownInterval);
-          timer.innerText = "Now you can continue!";
-          finalButton.style.display = "inline-block";
-          adButton.style.display = "none";
-          localStorage.removeItem('countdownStartTime');
-        } else {
-          timer.innerText = `Please wait ${secondsLeft} seconds...`;
-        }
-      }, 1000);
+    // Load saved state
+    if (localStorage.getItem('adClicked') === 'true') {
+      adClicked = true;
+      visitTimestamp = parseInt(localStorage.getItem('visitTimestamp') || '0');
+      checkReturn();
     }
 
     adButton.addEventListener('click', () => {
-      localStorage.setItem('countdownStartTime', Date.now());
-      window.location.href = 'https://monetag.com/'; // <-- Your Adsterra ad link
+      // Save timestamp
+      visitTimestamp = Date.now();
+      localStorage.setItem('visitTimestamp', visitTimestamp);
+      localStorage.setItem('adClicked', 'true');
+
+      // Open Adsterra link
+      window.location.href = 'https://monetag.com/';
     });
 
-    // Detect when user comes back to the page (from ad)
-    window.addEventListener('pageshow', (event) => {
-      let savedTime = localStorage.getItem('countdownStartTime');
-      if (savedTime) {
-        startCountdown();
-        adButton.style.display = "none";
+    // On return to page
+    window.addEventListener('pageshow', () => {
+      if (localStorage.getItem('adClicked') === 'true') {
+        checkReturn();
       }
     });
+
+    function checkReturn() {
+      let now = Date.now();
+      let diffSec = Math.floor((now - visitTimestamp) / 1000);
+
+      if (diffSec >= 12) {
+        startCountdown();
+      } else {
+        let waitMore = 12 - diffSec;
+        alert(`You must stay on ad page at least 12 seconds! Go back and wait ${waitMore} more seconds.`);
+        localStorage.setItem('adClicked', 'false');
+        window.location.reload();
+      }
+    }
+
+    function startCountdown() {
+      timer.innerText = `Please wait ${countdown} seconds...`;
+      let interval = setInterval(() => {
+        countdown--;
+        timer.innerText = `Please wait ${countdown} seconds...`;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          timer.innerText = "Now you can continue!";
+          finalButton.style.display = "inline-block";
+          adButton.style.display = "none";
+          // Clear saved data
+          localStorage.removeItem('adClicked');
+          localStorage.removeItem('visitTimestamp');
+        }
+      }, 1000);
+    }
 
     finalButton.addEventListener('click', () => {
       window.location.href = `https://t.me/Jil666Bot?start=${videoCode}`;
