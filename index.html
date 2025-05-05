@@ -100,7 +100,6 @@
 
     const requiredStay = 12; // seconds
 
-    // Anti-bot: wait for real human interaction
     let humanDetected = false;
     function enableButton() {
       if (!humanDetected) {
@@ -113,17 +112,14 @@
     window.addEventListener('touchstart', enableButton);
     window.addEventListener('scroll', enableButton);
 
-    // On page load — always reset state (like your first script)
     window.addEventListener('load', () => {
-      resetState();  // always reset on refresh or load
+      resetState();  // reset visual state
       checkUnlock();
     });
 
     adButton.addEventListener('click', () => {
-      // Prevent bot click before human detected
       if (adButton.classList.contains('disabled')) return;
 
-      // Save click time + mark ad visit started
       localStorage.setItem('adClickTime', Date.now());
       localStorage.setItem('adVisitInProgress', 'true');
       window.location.href = 'https://monetag.com/'; // your ad link
@@ -142,14 +138,18 @@
 
         if (timeSpent >= requiredStay) {
           unlockButton();
+
+          // Important: clear after success (so refresh shows red again)
+          localStorage.setItem('adVisitInProgress', 'false');
+          localStorage.removeItem('adClickTime');
+
         } else {
           alert(`You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
-          localStorage.removeItem('adClickTime');
+
+          // ⚠️ Fix: Don't clear clickTime here. Let user retry after refresh
           localStorage.setItem('adVisitInProgress', 'false');
-          resetState();
+          // do not remove adClickTime, allow retry logic to work
         }
-      } else {
-        resetState();
       }
     }
 
@@ -157,10 +157,6 @@
       timer.innerText = "✅ Now you can continue!";
       finalButton.style.display = "inline-block";
       adButton.style.display = "none";
-
-      // Important: Clear progress after success (so refresh shows red again)
-      localStorage.setItem('adVisitInProgress', 'false');
-      localStorage.removeItem('adClickTime');
     }
 
     function resetState() {
