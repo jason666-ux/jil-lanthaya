@@ -15,13 +15,12 @@
   <h1>Watch Full Video</h1>
   <p>Click the button below to continue</p>
 
-  <button class="btn red" id="adButton">Watch Full Video</button>
+  <button class="btn red" id="adButton" disabled>Watch Full Video</button>
   <button class="btn green" id="finalButton">Continue to Video</button>
 
   <p id="timer" style="font-size: 18px; margin-top: 20px;"></p>
 
   <script>
-    // Get video code from URL
     const urlParams = new URLSearchParams(window.location.search);
     const videoCode = urlParams.get('video');
 
@@ -33,56 +32,61 @@
     const finalButton = document.getElementById('finalButton');
     const timer = document.getElementById('timer');
 
-    const requiredStay = 12; // seconds
+    let countdown = 12;
+    let adClicked = false;
 
-    // On page load — check real condition
-    window.addEventListener('load', () => {
-      checkUnlock();
-    });
-
-    adButton.addEventListener('click', () => {
-      // Save click time + mark ad visit started
-      localStorage.setItem('adClickTime', Date.now());
-      localStorage.setItem('adVisitInProgress', 'true');
-      window.location.href = 'https://monetag.com/'; // your ad link
-    });
-
-    window.addEventListener('pageshow', () => {
-      checkUnlock();
-    });
-
-    function checkUnlock() {
-      let clickTime = localStorage.getItem('adClickTime');
-      let visitInProgress = localStorage.getItem('adVisitInProgress');
-
-      if (clickTime && visitInProgress === 'true') {
-        let timeSpent = Math.floor((Date.now() - clickTime) / 1000);
-
-        if (timeSpent >= requiredStay) {
-          unlockButton();
-        } else {
-          alert(`You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
-          resetState();
-        }
-      } else {
-        resetState();
+    // === Anti-Bot Protection === //
+    let humanDetected = false;
+    function enableButton() {
+      if (!humanDetected) {
+        humanDetected = true;
+        adButton.disabled = false;
       }
     }
 
-    function unlockButton() {
-      timer.innerText = "Now you can continue!";
-      finalButton.style.display = "inline-block";
-      adButton.style.display = "none";
-      // Mark as completed, no cheat on refresh
-      localStorage.setItem('adVisitInProgress', 'completed');
-    }
+    // Listen for real human activity (mouse or touch or scroll)
+    window.addEventListener('mousemove', enableButton);
+    window.addEventListener('touchstart', enableButton);
+    window.addEventListener('scroll', enableButton);
 
-    function resetState() {
-      timer.innerText = "";
+    adButton.addEventListener('click', () => {
+      window.localStorage.setItem('adClicked', 'true');
+      window.localStorage.setItem('adClickTime', Date.now().toString());
+      window.location.href = 'https://monetag.com/'; // Your ad link
+    });
+
+    // Detect when user comes BACK
+    window.addEventListener('pageshow', (event) => {
+      const clicked = window.localStorage.getItem('adClicked');
+      const clickTime = parseInt(window.localStorage.getItem('adClickTime') || '0');
+      const now = Date.now();
+
+      if (clicked === 'true') {
+        const secondsAway = Math.floor((now - clickTime) / 1000);
+
+        if (secondsAway >= 12) {
+          startCountdown();
+        } else {
+          alert("Please stay at least 12 seconds on the ad page before returning!");
+        }
+      }
+    });
+
+    function startCountdown() {
+      timer.innerText = `Please wait ${countdown} seconds...`;
       finalButton.style.display = "none";
-      adButton.style.display = "inline-block";
-      // Important: do not mark completed if cheated
-      localStorage.setItem('adVisitInProgress', 'false');
+      adButton.style.display = "none";
+      let interval = setInterval(() => {
+        countdown--;
+        timer.innerText = `Please wait ${countdown} seconds...`;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          timer.innerText = "Now you can continue!";
+          finalButton.style.display = "inline-block";
+          window.localStorage.removeItem('adClicked');
+          window.localStorage.removeItem('adClickTime');
+        }
+      }, 1000);
     }
 
     finalButton.addEventListener('click', () => {
