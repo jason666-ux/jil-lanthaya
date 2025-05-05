@@ -33,64 +33,42 @@
     const finalButton = document.getElementById('finalButton');
     const timer = document.getElementById('timer');
 
-    // Bonus Protection Data
-    let countdown = 12;
-    let adClicked = false;
-    let visitTimestamp = 0;
-
-    // Load saved state
-    if (localStorage.getItem('adClicked') === 'true') {
-      adClicked = true;
-      visitTimestamp = parseInt(localStorage.getItem('visitTimestamp') || '0');
-      checkReturn();
-    }
+    const requiredStay = 12; // seconds
 
     adButton.addEventListener('click', () => {
-      // Save timestamp
-      visitTimestamp = Date.now();
-      localStorage.setItem('visitTimestamp', visitTimestamp);
-      localStorage.setItem('adClicked', 'true');
-
-      // Open Adsterra link
-      window.location.href = 'https://monetag.com/';
+      // Save click timestamp
+      localStorage.setItem('adClickTime', Date.now());
+      // Go to ad page
+      window.location.href = 'https://monetag.com/'; // your ad link
     });
 
-    // On return to page
     window.addEventListener('pageshow', () => {
-      if (localStorage.getItem('adClicked') === 'true') {
-        checkReturn();
+      let clickTime = localStorage.getItem('adClickTime');
+      if (clickTime) {
+        let timeSpent = Math.floor((Date.now() - clickTime) / 1000);
+        console.log(`User stayed on ad page for ${timeSpent} seconds`);
+
+        if (timeSpent >= requiredStay) {
+          unlockButton(); // instantly show green button
+        } else {
+          alert(`You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
+          // Keep red button visible
+          resetState();
+        }
       }
     });
 
-    function checkReturn() {
-      let now = Date.now();
-      let diffSec = Math.floor((now - visitTimestamp) / 1000);
-
-      if (diffSec >= 12) {
-        startCountdown();
-      } else {
-        let waitMore = 12 - diffSec;
-        alert(`You must stay on ad page at least 12 seconds! Go back and wait ${waitMore} more seconds.`);
-        localStorage.setItem('adClicked', 'false');
-        window.location.reload();
-      }
+    function unlockButton() {
+      timer.innerText = "Now you can continue!";
+      finalButton.style.display = "inline-block";
+      adButton.style.display = "none";
+      localStorage.removeItem('adClickTime'); // clear time after success
     }
 
-    function startCountdown() {
-      timer.innerText = `Please wait ${countdown} seconds...`;
-      let interval = setInterval(() => {
-        countdown--;
-        timer.innerText = `Please wait ${countdown} seconds...`;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          timer.innerText = "Now you can continue!";
-          finalButton.style.display = "inline-block";
-          adButton.style.display = "none";
-          // Clear saved data
-          localStorage.removeItem('adClicked');
-          localStorage.removeItem('visitTimestamp');
-        }
-      }, 1000);
+    function resetState() {
+      timer.innerText = "";
+      finalButton.style.display = "none";
+      adButton.style.display = "inline-block";
     }
 
     finalButton.addEventListener('click', () => {
