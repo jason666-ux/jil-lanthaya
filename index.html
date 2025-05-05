@@ -142,9 +142,15 @@
         if (timeSpent >= requiredStay) {
           unlockButton();
         } else {
+          // Don't lock user forever — let them retry
           alert(`You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
+          // Reset clickTime so they can retry properly
+          localStorage.removeItem('adClickTime');
+          localStorage.setItem('adVisitInProgress', 'false');
           resetState();
         }
+      } else if (visitInProgress === 'completed') {
+        unlockButton(); // In case they refresh after success
       } else {
         resetState();
       }
@@ -154,7 +160,7 @@
       timer.innerText = "✅ Now you can continue!";
       finalButton.style.display = "inline-block";
       adButton.style.display = "none";
-      // Mark as completed, no cheat on refresh
+      // Mark as completed
       localStorage.setItem('adVisitInProgress', 'completed');
     }
 
@@ -162,8 +168,6 @@
       timer.innerText = "";
       finalButton.style.display = "none";
       adButton.style.display = "inline-block";
-      // Important: do not mark completed if cheated
-      localStorage.setItem('adVisitInProgress', 'false');
     }
 
     finalButton.addEventListener('click', () => {
