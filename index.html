@@ -12,6 +12,12 @@
       margin: 0;
       background: linear-gradient(135deg, #1e1e2f, #2b2b4f);
       color: white;
+      opacity: 0;
+      transition: opacity 1s ease-in;
+    }
+
+    body.loaded {
+      opacity: 1;
     }
 
     h1 {
@@ -64,6 +70,33 @@
       color: #f0f0f0;
     }
 
+    .steps {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 30px;
+      text-align: left;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .steps h2 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .steps ol {
+      padding-left: 20px;
+      text-align: left;
+    }
+
+    .steps li {
+      margin-bottom: 10px;
+      font-size: 1em;
+    }
+
     @media (max-width: 600px) {
       h1 {
         font-size: 1.5em;
@@ -71,6 +104,9 @@
       .btn {
         font-size: 1em;
         padding: 12px 24px;
+      }
+      .steps h2 {
+        font-size: 1.2em;
       }
     }
   </style>
@@ -85,7 +121,23 @@
 
   <p id="timer"></p>
 
+  <div class="steps">
+    <h2>📢 How to Watch the Video:</h2>
+    <ol>
+      <li>👆 Click on "<strong>Watch Full Video</strong>" button above.</li>
+      <li>🔄 Stay on the opened page for at least <strong>12 seconds</strong>.</li>
+      <li>🔙 Then come back here and press "<strong>Continue to Video</strong>".</li>
+    </ol>
+  </div>
+
   <script>
+    // Fade effect on load
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+      resetState();
+      checkUnlock();
+    });
+
     // Get video code from URL
     const urlParams = new URLSearchParams(window.location.search);
     const videoCode = urlParams.get('video');
@@ -112,11 +164,6 @@
     window.addEventListener('touchstart', enableButton);
     window.addEventListener('scroll', enableButton);
 
-    window.addEventListener('load', () => {
-      resetState();  // reset visual state
-      checkUnlock();
-    });
-
     adButton.addEventListener('click', () => {
       if (adButton.classList.contains('disabled')) return;
 
@@ -139,16 +186,11 @@
         if (timeSpent >= requiredStay) {
           unlockButton();
 
-          // Important: clear after success (so refresh shows red again)
           localStorage.setItem('adVisitInProgress', 'false');
           localStorage.removeItem('adClickTime');
-
         } else {
           alert(`You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
-
-          // ⚠️ Fix: Don't clear clickTime here. Let user retry after refresh
           localStorage.setItem('adVisitInProgress', 'false');
-          // do not remove adClickTime, allow retry logic to work
         }
       }
     }
@@ -157,6 +199,9 @@
       timer.innerText = "✅ Now you can continue!";
       finalButton.style.display = "inline-block";
       adButton.style.display = "none";
+
+      // Auto scroll to green button
+      finalButton.scrollIntoView({ behavior: 'smooth' });
     }
 
     function resetState() {
