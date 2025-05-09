@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Jil Lanthaya 2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="obfuscatedMap.js"></script>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -139,9 +140,9 @@
     });
 
     // Get video code from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoCode = urlParams.get('video');
-
+const code = urlParams.get('v'); // ?v=abc123
+const videoCode = obfuscatedMap[code]; // maps abc123 → video47
+    
     if (!videoCode) {
       document.body.innerHTML = "<h2>Error: No video code provided!</h2>";
     }
