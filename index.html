@@ -15,21 +15,9 @@
       opacity: 0;
       transition: opacity 1s ease-in;
     }
-
-    body.loaded {
-      opacity: 1;
-    }
-
-    h1 {
-      font-size: 2em;
-      margin-top: 20px;
-    }
-
-    p {
-      font-size: 1.1em;
-      margin-top: 10px;
-    }
-
+    body.loaded { opacity: 1; }
+    h1 { font-size: 2em; margin-top: 20px; }
+    p { font-size: 1.1em; margin-top: 10px; }
     .btn {
       padding: 15px 30px;
       font-size: 1.2em;
@@ -42,34 +30,14 @@
       width: 80%;
       max-width: 300px;
     }
-
     .btn:hover {
       transform: scale(1.05);
       box-shadow: 0 12px 20px rgba(0,0,0,0.3);
     }
-
-    .red {
-      background: linear-gradient(45deg, #ff416c, #ff4b2b);
-      color: white;
-    }
-
-    .green {
-      background: linear-gradient(45deg, #00b09b, #96c93d);
-      color: white;
-      display: none;
-    }
-
-    .disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    #timer {
-      font-size: 1em;
-      margin-top: 20px;
-      color: #f0f0f0;
-    }
-
+    .red { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; }
+    .green { background: linear-gradient(45deg, #00b09b, #96c93d); color: white; display: none; }
+    .disabled { opacity: 0.5; pointer-events: none; }
+    #timer { font-size: 1em; margin-top: 20px; color: #f0f0f0; }
     .steps {
       background: rgba(255, 255, 255, 0.1);
       padding: 20px;
@@ -80,34 +48,23 @@
       margin-left: auto;
       margin-right: auto;
     }
-
     .steps h2 {
       font-size: 1.5em;
       margin-bottom: 10px;
       text-align: center;
     }
-
     .steps ol {
       padding-left: 20px;
       text-align: left;
     }
-
     .steps li {
       margin-bottom: 10px;
       font-size: 1em;
     }
-
     @media (max-width: 600px) {
-      h1 {
-        font-size: 1.5em;
-      }
-      .btn {
-        font-size: 1em;
-        padding: 12px 24px;
-      }
-      .steps h2 {
-        font-size: 1.2em;
-      }
+      h1 { font-size: 1.5em; }
+      .btn { font-size: 1em; padding: 12px 24px; }
+      .steps h2 { font-size: 1.2em; }
     }
   </style>
 </head>
@@ -130,34 +87,24 @@
     </ol>
   </div>
 
-  <!-- ✅ Load the map file first -->
+  <!-- ✅ Load the obfuscated map file -->
   <script src="obfuscatedMap.js"></script>
 
-  <!-- ✅ Now main script -->
+  <!-- ✅ Main Logic -->
   <script>
-    // Fade effect on load
-    window.addEventListener('load', () => {
-      document.body.classList.add('loaded');
-      resetState();
-      checkUnlock();
-    });
-
-    // ✅ Declare urlParams properly
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('v'); // ?v=abc123
-    const videoCode = obfuscatedMap[code]; // maps abc123 → video47
+    const code = urlParams.get('v'); // obfuscated video code
+    const videoCode = obfuscatedMap[code]; // maps v → videoXX
 
-    if (!videoCode) {
-      document.body.innerHTML = "<h2>Error: No video code provided or invalid code!</h2>";
-    }
+    const VALID_TOKEN = "}/js*uc(Q)A(F9dPo}y7XeX.*LlD:h:kbJlCFOM:iclscvlxYG"; // must match bot
 
     const adButton = document.getElementById('adButton');
     const finalButton = document.getElementById('finalButton');
     const timer = document.getElementById('timer');
 
-    const requiredStay = 12; // seconds
-
+    const requiredStay = 12;
     let humanDetected = false;
+
     function enableButton() {
       if (!humanDetected) {
         humanDetected = true;
@@ -165,21 +112,18 @@
       }
     }
 
-    window.addEventListener('mousemove', enableButton);
-    window.addEventListener('touchstart', enableButton);
-    window.addEventListener('scroll', enableButton);
+    function resetState() {
+      timer.innerText = "";
+      finalButton.style.display = "none";
+      adButton.style.display = "inline-block";
+    }
 
-    adButton.addEventListener('click', () => {
-      if (adButton.classList.contains('disabled')) return;
-
-      localStorage.setItem('adClickTime', Date.now());
-      localStorage.setItem('adVisitInProgress', 'true');
-      window.location.href = 'https://www.profitableratecpm.com/v7zbxw86?key=b858468212d46aed313ff10820d6af93'; // your ad link
-    });
-
-    window.addEventListener('pageshow', () => {
-      checkUnlock();
-    });
+    function unlockButton() {
+      timer.innerText = "✅ Now you can continue!";
+      finalButton.style.display = "inline-block";
+      adButton.style.display = "none";
+      finalButton.scrollIntoView({ behavior: 'smooth' });
+    }
 
     function checkUnlock() {
       let clickTime = localStorage.getItem('adClickTime');
@@ -199,25 +143,37 @@
       }
     }
 
-    function unlockButton() {
-      timer.innerText = "✅ Now you can continue!";
-      finalButton.style.display = "inline-block";
-      adButton.style.display = "none";
-      finalButton.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Events
+    window.addEventListener('load', () => {
+      document.body.classList.add('loaded');
+      resetState();
+      checkUnlock();
+    });
 
-    function resetState() {
-      timer.innerText = "";
-      finalButton.style.display = "none";
-      adButton.style.display = "inline-block";
-    }
+    window.addEventListener('mousemove', enableButton);
+    window.addEventListener('touchstart', enableButton);
+    window.addEventListener('scroll', enableButton);
+
+    adButton.addEventListener('click', () => {
+      if (adButton.classList.contains('disabled')) return;
+
+      localStorage.setItem('adClickTime', Date.now());
+      localStorage.setItem('adVisitInProgress', 'true');
+      window.location.href = 'https://www.profitableratecpm.com/v7zbxw86?key=b858468212d46aed313ff10820d6af93'; // ad link
+    });
+
+    window.addEventListener('pageshow', () => checkUnlock());
 
     finalButton.addEventListener('click', () => {
-  const TOKEN = "}/js*uc(Q)A(F9dPo}y7XeX.*LlD:h:kbJlCFOM:iclscvlxYG"; // exact token your bot expects
-  const fullStartParam = encodeURIComponent(`${videoCode}_${TOKEN}`);
-  window.location.href = `https://t.me/Jil666Bot?start=${fullStartParam}`;
-});
+      if (!videoCode) {
+        alert("Invalid video code");
+        return;
+      }
 
+      const fullParam = `${videoCode}_${VALID_TOKEN}`;
+      const finalUrl = `https://t.me/Jil666Bot?start=${encodeURIComponent(fullParam)}`;
+      window.location.href = finalUrl;
+    });
   </script>
 
 </body>
