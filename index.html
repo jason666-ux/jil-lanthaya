@@ -130,28 +130,31 @@
     </ol>
   </div>
 
-  <!-- ✅ Load the obfuscation map file first -->
+  <!-- ✅ Load the map file first -->
   <script src="obfuscatedMap.js"></script>
 
+  <!-- ✅ Now main script -->
   <script>
+    // Fade effect on load
     window.addEventListener('load', () => {
       document.body.classList.add('loaded');
       resetState();
       checkUnlock();
     });
 
+    // ✅ Declare urlParams properly
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('v'); // ?v=abc123
-    const videoCode = obfuscatedMap[code]; // maps abc123 → video42
+    const videoCode = obfuscatedMap[code]; // maps abc123 → video47
 
     if (!videoCode) {
-      document.body.innerHTML = "<h2>⚠️ Error: No video code provided or invalid code!</h2>";
-      throw new Error("Missing or invalid videoCode");
+      document.body.innerHTML = "<h2>Error: No video code provided or invalid code!</h2>";
     }
 
     const adButton = document.getElementById('adButton');
     const finalButton = document.getElementById('finalButton');
     const timer = document.getElementById('timer');
+
     const requiredStay = 12; // seconds
 
     let humanDetected = false;
@@ -168,9 +171,10 @@
 
     adButton.addEventListener('click', () => {
       if (adButton.classList.contains('disabled')) return;
+
       localStorage.setItem('adClickTime', Date.now());
       localStorage.setItem('adVisitInProgress', 'true');
-      window.location.href = 'https://www.profitableratecpm.com/v7zbxw86?key=b858468212d46aed313ff10820d6af93';
+      window.location.href = 'https://www.profitableratecpm.com/v7zbxw86?key=b858468212d46aed313ff10820d6af93'; // your ad link
     });
 
     window.addEventListener('pageshow', () => {
@@ -178,17 +182,18 @@
     });
 
     function checkUnlock() {
-      const clickTime = localStorage.getItem('adClickTime');
-      const visitInProgress = localStorage.getItem('adVisitInProgress');
+      let clickTime = localStorage.getItem('adClickTime');
+      let visitInProgress = localStorage.getItem('adVisitInProgress');
 
       if (clickTime && visitInProgress === 'true') {
-        const timeSpent = Math.floor((Date.now() - clickTime) / 1000);
+        let timeSpent = Math.floor((Date.now() - clickTime) / 1000);
+
         if (timeSpent >= requiredStay) {
           unlockButton();
           localStorage.setItem('adVisitInProgress', 'false');
           localStorage.removeItem('adClickTime');
         } else {
-          alert(`⚠️ You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
+          alert(`You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
           localStorage.setItem('adVisitInProgress', 'false');
         }
       }
@@ -208,11 +213,10 @@
     }
 
     finalButton.addEventListener('click', () => {
-      const TOKEN = "}/js*uc(Q)A(F9dPo}y7XeX.*LlD:h:kbJlCFOM:iclscvlxYG"; // your current bot token
-      const fullStartParam = `${videoCode}_${TOKEN}`; // DO NOT encode
-      const telegramURL = `https://t.me/Jil666Bot?start=${fullStartParam}`;
-      console.log("➡️ Redirecting to:", telegramURL);
-      window.location.href = telegramURL;
+      const TOKEN = "safe_2pL4q9XfTs91mB3Ck6zVD";
+      const fullStartParam = `${videoCode}_${TOKEN}`;
+      window.location.href = `https://t.me/Jil666Bot?start=${fullStartParam}`;
+
     });
   </script>
 
