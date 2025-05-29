@@ -142,7 +142,6 @@
       checkUnlock();
     });
 
-    // ✅ Declare urlParams properly
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('v'); // ?v=abc123
     const videoCode = obfuscatedMap[code]; // maps abc123 → video47
@@ -174,7 +173,15 @@
 
       localStorage.setItem('adClickTime', Date.now());
       localStorage.setItem('adVisitInProgress', 'true');
-      window.location.href = 'https://otieu.com/4/9332830'; // your ad link
+
+      const links = [
+        "https://otieu.com/4/9332830",  // ✅ your Monetag link #1
+        "https://otieu.com/4/9332754",  // ✅ your Monetag link #2
+        "https://identifycertainlybookie.com/tcf9gsrkr8?key=be33d1af19d091d7a0d2070cbf8b2cc1", // ✅ your Adsterra link #1
+        "https://identifycertainlybookie.com/pz02btabaw?key=0c0ca8674ce11806cef4b9baa519f081"  // ✅ your Adsterra link #2
+      ];
+      const random = Math.floor(Math.random() * links.length);
+      window.location.href = links[random];
     });
 
     window.addEventListener('pageshow', () => {
@@ -213,9 +220,8 @@
     }
 
     finalButton.addEventListener('click', () => {
-    const TOKEN = "QBxQY54hztBu4dywPwHABy033FebZl";
-    window.location.href = `https://t.me/Jil666Bot?start=${videoCode}_${TOKEN}`;
-
+      const TOKEN = "QBxQY54hztBu4dywPwHABy033FebZl";
+      window.location.href = `https://t.me/Jil666Bot?start=${videoCode}_${TOKEN}`;
     });
   </script>
 
