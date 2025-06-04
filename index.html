@@ -130,10 +130,7 @@
     </ol>
   </div>
 
-  <!-- ✅ Load the map file first -->
-  <script src="obfuscatedMap.js"></script>
-
-  <!-- ✅ Now main script -->
+  <!-- ✅ Main logic script -->
   <script>
     window.addEventListener('load', () => {
       document.body.classList.add('loaded');
@@ -142,11 +139,11 @@
     });
 
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('v'); // ?v=abc123
-    const videoCode = obfuscatedMap[code]; // maps abc123 → actual Telegram file ID
+    const fileId = urlParams.get('p'); // ?p=<file_id>
 
-    if (!videoCode) {
-      document.body.innerHTML = "<h2>Error: No video code provided or invalid code!</h2>";
+    if (!fileId) {
+      document.body.innerHTML = "<h2>Error: No video file ID provided in the URL!</h2>";
+      throw new Error("Missing file ID");
     }
 
     const adButton = document.getElementById('adButton');
@@ -219,7 +216,7 @@
     }
 
     finalButton.addEventListener('click', () => {
-      window.location.href = `https://t.me/Jil666Bot?start=${videoCode}`;
+      window.location.href = `https://t.me/jillanthayavideoBot?start=${fileId}`;
     });
   </script>
 
