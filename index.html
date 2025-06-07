@@ -131,7 +131,7 @@
     <h1>🎥 Jil Lanthaya 2.0</h1>
     <p>Click the button below to continue</p>
 
-    <button class="btn red disabled" id="adButton">🚀 Watch Full Video</button>
+    <button class="btn red disabled" id="adButton">🚀 View Video</button>
     <button class="btn green" id="finalButton">✅ Continue to Video</button>
 
     <p id="timer"></p>
@@ -222,7 +222,7 @@
           localStorage.removeItem('adClickTime');
           localStorage.removeItem('stayTime');
         } else {
-          alert(`You must stay at least 15 seconds on the ad page! You only stayed ${timeSpent} seconds.`);
+          alert(`You must stay at least 15–20 seconds on the ad page! You only stayed ${timeSpent} seconds.`);
           localStorage.setItem('adVisitInProgress', 'false');
         }
       }
