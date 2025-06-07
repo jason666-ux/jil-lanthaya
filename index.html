@@ -6,21 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-    body {
+
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(-45deg, #1f1c2c, #928dab, #2b5876, #4e4376);
+      background: linear-gradient(135deg, #2b5876, #4e4376);
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
       color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
       min-height: 100vh;
       padding: 20px;
-      box-sizing: border-box;
     }
 
     @keyframes gradientBG {
@@ -30,56 +33,69 @@
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 30px 20px;
-      max-width: 500px;
+      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 25px;
+      padding: 35px 25px;
+      max-width: 520px;
       width: 100%;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
       text-align: center;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: 0.3s ease;
     }
 
     h1 {
-      font-size: 2em;
+      font-size: 2.3em;
       margin-bottom: 10px;
+      color: #ffffff;
     }
 
     p {
       font-size: 1.1em;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      color: #e0e0e0;
     }
 
     .btn {
-      padding: 15px 25px;
-      margin-top: 25px;
+      display: inline-block;
+      margin-top: 20px;
+      padding: 15px 30px;
       font-size: 1.1em;
       border-radius: 50px;
-      border: none;
       width: 100%;
       max-width: 300px;
-      color: white;
+      color: #fff;
       cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      z-index: -1;
       transition: 0.3s;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-    }
-
-    .red {
+    .btn.red::before {
       background: linear-gradient(135deg, #ff416c, #ff4b2b);
     }
 
-    .green {
+    .btn.green::before {
       background: linear-gradient(135deg, #00b09b, #96c93d);
-      display: none;
     }
 
-    .disabled {
+    .btn:hover::before {
+      filter: brightness(1.1);
+    }
+
+    .btn.disabled {
       opacity: 0.5;
       pointer-events: none;
     }
@@ -87,7 +103,7 @@
     #timer {
       margin-top: 15px;
       font-size: 1em;
-      color: #dcdcdc;
+      color: #d0d0d0;
     }
 
     .steps {
@@ -95,13 +111,15 @@
       text-align: left;
       padding: 20px;
       border-radius: 15px;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255,255,255,0.1);
     }
 
     .steps h2 {
       text-align: center;
-      font-size: 1.3em;
+      font-size: 1.2em;
       margin-bottom: 15px;
+      color: #ffffff;
     }
 
     .steps ol {
@@ -110,11 +128,13 @@
 
     .steps li {
       margin-bottom: 12px;
+      color: #dcdcdc;
+      line-height: 1.5;
     }
 
     @media (max-width: 600px) {
       h1 {
-        font-size: 1.5em;
+        font-size: 1.8em;
       }
       .btn {
         font-size: 1em;
@@ -137,9 +157,9 @@
     <div class="steps">
       <h2>📢 How to Watch the Video:</h2>
       <ol>
-        <li>👆 Click on "<strong>Watch Full Video</strong>" button above.</li>
+        <li>👆 Click the <strong>View Video</strong> button above.</li>
         <li id="waitTimeStep">🔄 Stay on the opened page for at least <strong>15–20 seconds</strong>.</li>
-        <li>🔙 Then come back here and press "<strong>Continue to Video</strong>".</li>
+        <li>🔙 Return here and click <strong>Continue to Video</strong>.</li>
       </ol>
     </div>
   </div>
@@ -164,16 +184,14 @@
 
     let requiredStay = localStorage.getItem('stayTime');
     if (!requiredStay) {
-      requiredStay = Math.floor(Math.random() * 6) + 15; // 15 to 20 seconds
+      requiredStay = Math.floor(Math.random() * 6) + 15; // 15 to 20
       localStorage.setItem('stayTime', requiredStay);
     } else {
       requiredStay = parseInt(requiredStay);
     }
 
     const waitTimeStep = document.getElementById('waitTimeStep');
-    if (waitTimeStep) {
-      waitTimeStep.innerHTML = `🔄 Stay on the opened page for at least <strong>15–20 seconds</strong>.`;
-    }
+    waitTimeStep.innerHTML = `🔄 Stay on the opened page for at least <strong>15–20 seconds</strong>.`;
 
     let humanDetected = false;
     function enableButton() {
