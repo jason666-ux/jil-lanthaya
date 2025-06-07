@@ -5,57 +5,79 @@
   <title>Jil Lanthaya 2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    /* Font + background animation */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
     body {
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      padding: 30px;
       margin: 0;
-      background: linear-gradient(135deg, #1e1e2f, #2b2b4f);
-      color: white;
-      opacity: 0;
-      transition: opacity 1s ease-in;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #1f1c2c, #928dab, #2b5876, #4e4376);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
-    body.loaded {
-      opacity: 1;
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 30px 20px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     h1 {
       font-size: 2em;
-      margin-top: 20px;
+      margin-bottom: 10px;
     }
 
     p {
       font-size: 1.1em;
-      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     .btn {
-      padding: 15px 30px;
-      font-size: 1.2em;
-      cursor: pointer;
-      border: none;
+      padding: 15px 25px;
+      margin-top: 25px;
+      font-size: 1.1em;
       border-radius: 50px;
-      margin-top: 30px;
-      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-      transition: all 0.3s ease;
-      width: 80%;
+      border: none;
+      width: 100%;
       max-width: 300px;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
     .btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 12px 20px rgba(0,0,0,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
     }
 
     .red {
-      background: linear-gradient(45deg, #ff416c, #ff4b2b);
-      color: white;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
     }
 
     .green {
-      background: linear-gradient(45deg, #00b09b, #96c93d);
-      color: white;
+      background: linear-gradient(135deg, #00b09b, #96c93d);
       display: none;
     }
 
@@ -65,36 +87,31 @@
     }
 
     #timer {
+      margin-top: 15px;
       font-size: 1em;
-      margin-top: 20px;
-      color: #f0f0f0;
+      color: #dcdcdc;
     }
 
     .steps {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 12px;
       margin-top: 30px;
       text-align: left;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      padding: 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .steps h2 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
       text-align: center;
+      font-size: 1.3em;
+      margin-bottom: 15px;
     }
 
     .steps ol {
       padding-left: 20px;
-      text-align: left;
     }
 
     .steps li {
-      margin-bottom: 10px;
-      font-size: 1em;
+      margin-bottom: 12px;
     }
 
     @media (max-width: 600px) {
@@ -103,43 +120,40 @@
       }
       .btn {
         font-size: 1em;
-        padding: 12px 24px;
-      }
-      .steps h2 {
-        font-size: 1.2em;
+        padding: 12px 20px;
       }
     }
   </style>
 </head>
 <body>
 
-  <h1>🎥Jil Lanthaya 2.0</h1>
-  <p>Click the button below to continue</p>
+  <div class="container">
+    <h1>🎥 Jil Lanthaya 2.0</h1>
+    <p>Click the button below to continue</p>
 
-  <button class="btn red disabled" id="adButton">🚀 Watch Full Video</button>
-  <button class="btn green" id="finalButton">✅ Continue to Video</button>
+    <button class="btn red disabled" id="adButton">🚀 Watch Full Video</button>
+    <button class="btn green" id="finalButton">✅ Continue to Video</button>
 
-  <p id="timer"></p>
+    <p id="timer"></p>
 
-  <div class="steps">
-    <h2>📢 How to Watch the Video:</h2>
-    <ol>
-      <li>👆 Click on "<strong>Watch Full Video</strong>" button above.</li>
-      <li id="waitTimeStep">🔄 Stay on the opened page for at least <strong>15–20 seconds</strong>.</li>
-      <li>🔙 Then come back here and press "<strong>Continue to Video</strong>".</li>
-    </ol>
+    <div class="steps">
+      <h2>📢 How to Watch the Video:</h2>
+      <ol>
+        <li>👆 Click on "<strong>Watch Full Video</strong>" button above.</li>
+        <li id="waitTimeStep">🔄 Stay on the opened page for at least <strong>15–20 seconds</strong>.</li>
+        <li>🔙 Then come back here and press "<strong>Continue to Video</strong>".</li>
+      </ol>
+    </div>
   </div>
 
-  <!-- ✅ Main logic script -->
   <script>
     window.addEventListener('load', () => {
-      document.body.classList.add('loaded');
       resetState();
       checkUnlock();
     });
 
     const urlParams = new URLSearchParams(window.location.search);
-    const fileId = urlParams.get('p'); // ?p=<file_id>
+    const fileId = urlParams.get('p');
 
     if (!fileId) {
       document.body.innerHTML = "<h2>Error: No video file ID provided in the URL!</h2>";
@@ -150,16 +164,14 @@
     const finalButton = document.getElementById('finalButton');
     const timer = document.getElementById('timer');
 
-    // ✅ Random stay time between 15–20 seconds
     let requiredStay = localStorage.getItem('stayTime');
     if (!requiredStay) {
-      requiredStay = Math.floor(Math.random() * 6) + 15; // 15 to 20 seconds
+      requiredStay = Math.floor(Math.random() * 6) + 15;
       localStorage.setItem('stayTime', requiredStay);
     } else {
       requiredStay = parseInt(requiredStay);
     }
 
-    // ✅ Update instruction dynamically
     const waitTimeStep = document.getElementById('waitTimeStep');
     if (waitTimeStep) {
       waitTimeStep.innerHTML = `🔄 Stay on the opened page for at least <strong>${requiredStay} seconds</strong>.`;
@@ -233,6 +245,5 @@
       window.location.href = `https://t.me/Jil666Bot?start=${fileId}`;
     });
   </script>
-
 </body>
 </html>
