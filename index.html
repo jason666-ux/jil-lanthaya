@@ -5,9 +5,7 @@
   <title>Jil Lanthaya 2.0</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Font + background animation */
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
     body {
       margin: 0;
       padding: 0;
@@ -166,7 +164,7 @@
 
     let requiredStay = localStorage.getItem('stayTime');
     if (!requiredStay) {
-      requiredStay = Math.floor(Math.random() * 6) + 15;
+      requiredStay = Math.floor(Math.random() * 6) + 15; // 15 to 20 seconds
       localStorage.setItem('stayTime', requiredStay);
     } else {
       requiredStay = parseInt(requiredStay);
@@ -174,7 +172,7 @@
 
     const waitTimeStep = document.getElementById('waitTimeStep');
     if (waitTimeStep) {
-      waitTimeStep.innerHTML = `🔄 Stay on the opened page for at least <strong>${requiredStay} seconds</strong>.`;
+      waitTimeStep.innerHTML = `🔄 Stay on the opened page for at least <strong>15–20 seconds</strong>.`;
     }
 
     let humanDetected = false;
