@@ -125,7 +125,7 @@
     <h2>📢 How to Watch the Video:</h2>
     <ol>
       <li>👆 Click on "<strong>Watch Full Video</strong>" button above.</li>
-      <li>🔄 Stay on the opened page for at least <strong>12 to 15 seconds</strong>.</li>
+      <li id="waitTimeStep">🔄 Stay on the opened page for at least <strong>15–20 seconds</strong>.</li>
       <li>🔙 Then come back here and press "<strong>Continue to Video</strong>".</li>
     </ol>
   </div>
@@ -150,7 +150,20 @@
     const finalButton = document.getElementById('finalButton');
     const timer = document.getElementById('timer');
 
-    const requiredStay = 12; // seconds
+    // ✅ Random stay time between 15–20 seconds
+    let requiredStay = localStorage.getItem('stayTime');
+    if (!requiredStay) {
+      requiredStay = Math.floor(Math.random() * 6) + 15; // 15 to 20 seconds
+      localStorage.setItem('stayTime', requiredStay);
+    } else {
+      requiredStay = parseInt(requiredStay);
+    }
+
+    // ✅ Update instruction dynamically
+    const waitTimeStep = document.getElementById('waitTimeStep');
+    if (waitTimeStep) {
+      waitTimeStep.innerHTML = `🔄 Stay on the opened page for at least <strong>${requiredStay} seconds</strong>.`;
+    }
 
     let humanDetected = false;
     function enableButton() {
@@ -195,6 +208,7 @@
           unlockButton();
           localStorage.setItem('adVisitInProgress', 'false');
           localStorage.removeItem('adClickTime');
+          localStorage.removeItem('stayTime');
         } else {
           alert(`You must stay at least ${requiredStay} seconds on the ad page! You only stayed ${timeSpent} sec.`);
           localStorage.setItem('adVisitInProgress', 'false');
